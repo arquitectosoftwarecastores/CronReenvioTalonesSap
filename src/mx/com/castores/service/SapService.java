@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mx.com.castores.util.AccessToken;
+import org.apache.commons.logging.LogConfigurationException;
 
 /**
  *
@@ -37,6 +38,7 @@ public class SapService {
         String accessToken = getTokenSAP(objToken);
         if (accessToken != null) {
             lstTalonesSapLog.forEach(talon -> {
+                System.err.println(talon.getId());
                 Optional<Endpoints_sap> filteredEendpointsSap = lstEndpointsSap.stream()
                         .filter(endpoint -> endpoint.getId_servicio() == talon.getIdservicio())
                         .findFirst();
@@ -66,7 +68,7 @@ public class SapService {
             authToken = obj.optString("access_token", "");
             return authToken;
 
-        } catch (UnirestException ex) {
+        }catch(LogConfigurationException | UnirestException ex){
             Logger.getLogger(SapService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
