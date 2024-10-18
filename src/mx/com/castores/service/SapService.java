@@ -144,7 +144,7 @@ public class SapService {
                     .asString();
             JSONObject jsonResponse = new JSONObject(response.getBody());
             respuestaSAP = response.getBody();
-            if (jsonResponse.has("message")) {
+            if (jsonResponse.has("respuesta") || jsonResponse.has("message") && !jsonResponse.has("exception")) {
                 return true;
             }
         } catch (UnirestException | JsonSyntaxException ex) {
