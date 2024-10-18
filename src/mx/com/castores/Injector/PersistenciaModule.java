@@ -20,12 +20,14 @@ public class PersistenciaModule implements Module {
         String serverOficina;
 
         binder.bind(Persistencia.class).to(PersistenciaLocal.class);
+
         Properties properties = new Properties();
 
         try {
-            InputStream input = new FileInputStream("application.properties");
             
-            properties.load(input);
+            InputStream inputTest = new FileInputStream("application.properties");
+
+            properties.load(inputTest);
             String env = properties.getProperty("env");
             if (env.equals("dev")) {
                 server13 = properties.getProperty("devServer13");
