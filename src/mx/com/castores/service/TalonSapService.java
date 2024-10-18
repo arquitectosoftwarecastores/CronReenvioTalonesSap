@@ -56,7 +56,7 @@ public class TalonSapService {
         calendario.add(Calendar.MINUTE, -2);
         Date fechaPasada = calendario.getTime();
         
-        criteriaBuilder.between("CONCAT(fecha,' ',hora)", fechaPasada, "NOW()");
+        criteriaBuilder.add("CONCAT(fecha,' ',hora)","<", fechaPasada);
         criteriaBuilder.eq("peticion", "PRE-REGISTRO");
         criteriaBuilder.in("respuesta_servicio", new String[]{"Registro Antes de enviar a SAP","Error: No se pudo obtener el token de autenticación."});
         List<Sap_logs> lstTalones = talonesLogSapDao.findBy(criteriaBuilder);
