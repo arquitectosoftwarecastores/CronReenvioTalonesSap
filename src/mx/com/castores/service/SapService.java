@@ -1,5 +1,6 @@
 package mx.com.castores.service;
 
+import mx.com.castores.dto.TokenDTO;
 import castores.dao.talones.ParametrosDao;
 import castores.dao.talones.Sap_logsDao;
 import castores.model.castores.Endpoints_sap;
@@ -9,22 +10,16 @@ import com.castores.criteriaapi.core.CriteriaBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.inject.Injector;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import mx.com.castores.Injector.AppInjector;
-import mx.com.castores.dto.*;
 
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.google.gson.Gson;
 import java.util.Optional;
 import org.json.JSONObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import mx.com.castores.util.AccessToken;
 import org.apache.commons.logging.LogConfigurationException;
 
 /**
@@ -122,36 +117,36 @@ public class SapService {
 
     public void reenviarTalon(String sapJson, String accessTokenInhouse, String endpoint, String serverUrl, Sap_logs sapLogs) {
         String url = serverUrl + endpoint;
-        boolean responseEntity = executeRequest(url, accessTokenInhouse, sapJson);
-        if (responseEntity) {
-            Injector inj = AppInjector.getInjector();
-            Sap_logsDao talonesLogSapDao = inj.getInstance(Sap_logsDao.class);
-            sapLogs.setPeticion("ESCRITURA");
-            sapLogs.setFecha(talonesLogSapDao.getCurrentDate());
-            sapLogs.setHora(talonesLogSapDao.getCurrentDate());
-            talonesLogSapDao.edit(sapLogs);
+        String responseEntity = executeRequest(url, accessTokenInhouse, sapJson, sapLogs.getIdservicio());
+        Injector inj = AppInjector.getInjector();
+        Sap_logsDao talonesLogSapDao = inj.getInstance(Sap_logsDao.class);
+        sapLogs.setPeticion("ESCRITURA");
+        sapLogs.setFecha(talonesLogSapDao.getCurrentDate());
+        sapLogs.setHora(talonesLogSapDao.getCurrentDate());
+        if (responseEntity!=null) {
+            sapLogs.setRespuesta_servicio(responseEntity);
         }
+        talonesLogSapDao.edit(sapLogs);
     }
 
-    public boolean executeRequest(String url, String tokenSAP, String body) {
+    public String executeRequest(String url, String tokenSAP, String body, int idTipoServicio) {
         try {
-
+            
             String respuestaSAP = "";
             HttpResponse<String> response = Unirest.post(url)
                     .header("Authorization", "Bearer " + tokenSAP)
                     .header("Content-Type", "application/json")
                     .body(body)
                     .asString();
-            JSONObject jsonResponse = new JSONObject(response.getBody());
             respuestaSAP = response.getBody();
-            if (jsonResponse.has("respuesta") || jsonResponse.has("message") && !jsonResponse.has("exception")) {
-                return true;
-            }
+            return respuestaSAP;
+          
         } catch (UnirestException | JsonSyntaxException ex) {
             Logger.getLogger(SapService.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } catch (Exception ex) {
             Logger.getLogger(SapService.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
-        return false;
     }
 }
