@@ -6,6 +6,13 @@
 
 package cronreenviotalones;
 
+import castores.model.castores.Endpoints_sap;
+import castores.model.talones.Sap_logs;
+import castores.model.talones.Servicios_sap;
+import java.util.List;
+import mx.com.castores.service.SapService;
+import mx.com.castores.service.TalonSapService;
+
 /**
  *
  * @author desarrolloti32
@@ -16,7 +23,12 @@ public class CronReenvioTalones {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        TalonSapService talonService = new TalonSapService();
+        SapService sapService = new SapService();
+        List<Sap_logs> lstServiciosSap = talonService.findTalonesPreRegistro();
+        List<Endpoints_sap> lstEndpointsSap = talonService.getAllEnpointsSap();
+        sapService.sendTalonSap(lstServiciosSap, lstEndpointsSap);
+        
     }
     
 }
