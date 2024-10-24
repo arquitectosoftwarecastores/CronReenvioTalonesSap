@@ -14,9 +14,8 @@ public class AppInjector {
                     InjectorContainer ic = InjectorContainer.getInstance(inject);
                 }
             }
-            return inject;
-        } else {
-            return inject;
-        }
+        } 
+        return inject;
+       
     }
 }
