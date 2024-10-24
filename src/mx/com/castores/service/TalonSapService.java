@@ -49,14 +49,8 @@ public class TalonSapService {
         Injector inj = AppInjector.getInjector();
         CriteriaBuilder criteriaBuilder = new CriteriaBuilder();
         Sap_logsDao talonesLogSapDao = inj.getInstance(Sap_logsDao.class);
-        Calendar calendario = Calendar.getInstance();
-
-        calendario.setTime( new Date());
-        // Restar 24 horas
-        calendario.add(Calendar.MINUTE, -2);
-        Date fechaPasada = calendario.getTime();
-        
-        criteriaBuilder.add("CONCAT(fecha,' ',hora)","<", fechaPasada);
+      
+        criteriaBuilder.add("CONCAT(fecha,' ',hora)","<", "DATE_SUB(NOW(), INTERVAL 2 MINUTE)");
         criteriaBuilder.eq("peticion", "PRE-REGISTRO");
         criteriaBuilder.in("respuesta_servicio", new String[]{"Registro Antes de enviar a SAP","Error: No se pudo obtener el token de autenticación."});
         List<Sap_logs> lstTalones = talonesLogSapDao.findBy(criteriaBuilder);
