@@ -33,7 +33,6 @@ public class SapService {
         String accessToken = getTokenSAP(objToken);
         if (accessToken != null) {
             lstTalonesSapLog.forEach(talon -> {
-                System.err.println(talon.getId());
                 Optional<Endpoints_sap> filteredEendpointsSap = lstEndpointsSap.stream()
                         .filter(endpoint -> endpoint.getId_servicio() == talon.getIdservicio())
                         .findFirst();
@@ -41,9 +40,7 @@ public class SapService {
                 if (filteredEendpointsSap.isPresent()) {
                     Endpoints_sap endpointsSap = filteredEendpointsSap.get();
                     reenviarTalon(talon.getParametros(), accessToken, endpointsSap.getEndpoint(), objToken.getUrlServidor(), talon);
-                } else {
-
-                }
+                } 
             });
         }
     }
